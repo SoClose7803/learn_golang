@@ -3,20 +3,40 @@ package config
 import (
 	"fmt"
 	"log"
-	"gorm.io/driver/postgres"
+
+	"gorm.io/driver/sqlserver"
 	"gorm.io/gorm"
 )
 
+// Biến DB toàn cục
 var DB *gorm.DB
 
+// Định nghĩa model User
+type User struct {
+	ID       uint   `gorm:"primaryKey"`
+	Name     string
+	Email    string `gorm:"unique"`
+	Password string
+}
+
+// Kết nối và tạo bảng
 func ConnectDatabase() {
-	dsn := "host=localhost user=postgres password=yourpassword dbname=user_db port=5432 sslmode=disable"
-	database, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	dsn := "sqlserver://sa:123456123456@localhost:1433?database=user_db"
+	database, err := gorm.Open(sqlserver.Open(dsn), &gorm.Config{})
 
 	if err != nil {
-		log.Fatal("❌ Không thể kết nối database:", err)
+		log.Fatal("❌ Không thể kết nối đến SQL Server:", err)
 	}
 
-	fmt.Println("✅ Kết nối database thành công!")
+	fmt.Println("✅ Kết nối SQL Server thành công!")
+
+	// GORM AutoMigrate: Tạo bảng nếu chưa có
+	err = database.AutoMigrate(&User{})
+	if err != nil {
+		log.Fatal("❌ Lỗi khi tạo bảng:", err)
+	}
+
+	fmt.Println("✅ Tạo bảng thành công!")
+
 	DB = database
 }
