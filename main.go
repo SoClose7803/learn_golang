@@ -25,4 +25,5 @@ func main() {
 	fmt.Println("Xin chào, thế giới!")
 	fmt.Println("Ngày và giờ hiện tại:", time.Now().Format(time.RFC1123))
 	fmt.Println("Địa chỉ IP của máy tính:", getLocalIP())
+	fmt
 }
